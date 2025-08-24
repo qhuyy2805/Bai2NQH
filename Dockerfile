@@ -1,5 +1,5 @@
 # Sử dụng Tomcat ổn định + JDK 17
-FROM tomcat:10.1-jdk21
+FROM tomcat:10.1.44-jdk21
 
 # Xóa webapp mặc định
 RUN rm -rf /usr/local/tomcat/webapps/*
