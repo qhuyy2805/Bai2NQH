@@ -1,31 +1,14 @@
-# ===========================
-# Stage 1: Build WAR với Maven
-# ===========================
-FROM maven:3.9.6-eclipse-temurin-17 AS build
+# Sử dụng Tomcat ổn định + JDK 17
+FROM tomcat:10.1.44-jdk11
 
-# Thư mục làm việc trong container
-WORKDIR /app
+# Xóa webapp mặc định
+RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Copy pom.xml và source code
-COPY pom.xml .
-COPY src ./src
+# Copy file WAR vào Tomcat (chỉnh lại đúng đường dẫn)
+COPY ./dist/Bai2NQH.war /usr/local/tomcat/webapps/ROOT.war
 
-# Build project, bỏ qua test để nhanh hơn
-RUN mvn clean package -DskipTests
-
-# ===========================
-# Stage 2: Chạy Tomcat
-# ===========================
-FROM tomcat:10.1.44-jdk17-temurin
-
-# Xóa ROOT app mặc định
-RUN rm -rf /usr/local/tomcat/webapps/ROOT
-
-# Copy WAR từ stage build vào Tomcat
-COPY --from=build /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
-
-# Expose cổng 8080
+# Expose port 8080 (Render sẽ map vào $PORT)
 EXPOSE 8080
 
-# Start Tomcat
+# Khởi động Tomcat
 CMD ["catalina.sh", "run"]
